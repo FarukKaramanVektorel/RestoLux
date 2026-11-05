@@ -1,0 +1,57 @@
+@{
+    ViewData["Title"] = "Rezervasyon";
+    var branches = ViewBag.Branches as IEnumerable<RestoLux.Application.DTOs.BranchDto> ?? new List<RestoLux.Application.DTOs.BranchDto>();
+}
+<h2 class="mb-3">Rezervasyon Yap</h2>
+@if (TempData["Error"] is string err) { <div class="alert alert-danger">@err</div> }
+<form asp-controller="Reservation" asp-action="Create" method="post" class="row g-3">
+    @Html.AntiForgeryToken()
+    <div class="col-md-6">
+        <label class="form-label">Ad</label>
+        <input name="firstName" class="form-control" required />
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Soyad</label>
+        <input name="lastName" class="form-control" required />
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">E-posta</label>
+        <input name="email" type="email" class="form-control" />
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Telefon</label>
+        <input name="phone" class="form-control" />
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Şube</label>
+        <select name="branchId" class="form-select" required>
+            @foreach (var b in branches)
+            {
+                <option value="@b.Id">@b.Name</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Kişi Sayısı</label>
+        <input name="guestCount" type="number" min="1" value="2" class="form-control" required />
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Tarih</label>
+        <input name="date" type="date" class="form-control" value="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" required />
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Başlangıç</label>
+        <input name="startTime" type="time" class="form-control" value="19:00" required />
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Bitiş</label>
+        <input name="endTime" type="time" class="form-control" value="21:00" required />
+    </div>
+    <div class="col-12">
+        <label class="form-label">Özel İstekler</label>
+        <textarea name="specialRequests" class="form-control"></textarea>
+    </div>
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Rezervasyon Oluştur</button>
+    </div>
+</form>

@@ -1,0 +1,39 @@
+@{
+    ViewData["Title"] = "Yeni Görsel";
+    var products = ViewBag.Products as IEnumerable<RestoLux.Application.DTOs.ProductDto> ?? new List<RestoLux.Application.DTOs.ProductDto>();
+}
+<h2 class="mb-3">Yeni Görsel Yükle</h2>
+<form asp-controller="ProductImages" asp-action="Upload" method="post" enctype="multipart/form-data" class="row g-3">
+    @Html.AntiForgeryToken()
+    <div class="col-md-6">
+        <label class="form-label">Ürün</label>
+        <select name="productId" class="form-select" required>
+            @foreach (var p in products)
+            {
+                <option value="@p.Id">@p.Name</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Dosya</label>
+        <input type="file" name="file" class="form-control" accept="image/*" required />
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Alt Metin</label>
+        <input name="altText" class="form-control" />
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Sıra</label>
+        <input name="sortOrder" type="number" value="0" class="form-control" />
+    </div>
+    <div class="col-md-3 d-flex align-items-end">
+        <div class="form-check">
+            <input type="checkbox" name="isPrimary" value="true" class="form-check-input" id="isPrimary" />
+            <label class="form-check-label" for="isPrimary">Ana Görsel</label>
+        </div>
+    </div>
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Yükle</button>
+        <a class="btn btn-secondary" asp-action="Index">İptal</a>
+    </div>
+</form>

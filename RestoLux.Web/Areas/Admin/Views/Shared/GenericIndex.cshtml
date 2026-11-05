@@ -1,0 +1,220 @@
+@model RestoLux.Web.Models.Admin.AdminListViewModel
+@{
+    ViewData["Title"] = Model.Title;
+}
+<h2 class="mb-3">@Model.Title</h2>
+<a class="btn btn-primary mb-3" asp-action="Create">Yeni Ekle</a>
+@if (!Model.Items.Any())
+{
+    <p>Kayıt bulunamadı.</p>
+}
+else
+{
+    var props = Model.Items.First().GetType().GetProperties();
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    @foreach (var p in props)
+                    {
+                        <th>@Label(p.Name)</th>
+                    }
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    var idProp = item.GetType().GetProperty("Id");
+                    var idVal = idProp?.GetValue(item);
+                    <tr>
+                        @foreach (var p in props)
+                        {
+                            <td>@p.GetValue(item)</td>
+                        }
+                        <td>
+                            <a class="btn btn-sm btn-info" asp-action="Details" asp-route-id="@idVal">Detay</a>
+                            <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@idVal">Düzenle</a>
+                            <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@idVal">Sil</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@functions {
+    string Label(string name)
+    {
+        var map = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Id"] = "No",
+            ["Name"] = "Ad",
+            ["Slug"] = "Slug",
+            ["Description"] = "Açıklama",
+            ["Price"] = "Fiyat",
+            ["IsActive"] = "Aktif",
+            ["IsDeleted"] = "Silinmiş",
+            ["CreatedAt"] = "Oluşturulma",
+            ["UpdatedAt"] = "Güncellenme",
+            ["BranchId"] = "Şube",
+            ["RestaurantId"] = "Restoran",
+            ["CategoryId"] = "Kategori",
+            ["TaxRuleId"] = "Vergi Kuralı",
+            ["SortOrder"] = "Sıra",
+            ["CurrencyCode"] = "Para Birimi",
+            ["DefaultCulture"] = "Varsayılan Dil",
+            ["Email"] = "E-posta",
+            ["Phone"] = "Telefon",
+            ["Address"] = "Adres",
+            ["City"] = "Şehir",
+            ["Capacity"] = "Kapasite",
+            ["IsMainBranch"] = "Ana Şube",
+            ["Title"] = "Başlık",
+            ["Content"] = "İçerik",
+            ["Status"] = "Durum",
+            ["Rating"] = "Puan",
+            ["AuthorName"] = "Yazar",
+            ["Comment"] = "Yorum",
+            ["IsApproved"] = "Onaylı",
+            ["IsFeatured"] = "Öne Çıkan",
+            ["CustomerId"] = "Müşteri",
+            ["GuestCount"] = "Kişi Sayısı",
+            ["SpecialRequests"] = "Özel İstekler",
+            ["Date"] = "Tarih",
+            ["StartTime"] = "Başlangıç",
+            ["EndTime"] = "Bitiş",
+            ["ConfirmationCode"] = "Onay Kodu",
+            ["AllergenId"] = "Alerjen",
+            ["DietaryTagId"] = "Diyet Etiketi",
+            ["Url"] = "URL",
+            ["AltText"] = "Alt Metin",
+            ["IsPrimary"] = "Ana Görsel",
+            ["PriceDifference"] = "Fiyat Farkı",
+            ["IsRequired"] = "Zorunlu",
+            ["MinSelections"] = "Min Seçim",
+            ["MaxSelections"] = "Max Seçim",
+            ["TableNumber"] = "Masa No",
+            ["MinCapacity"] = "Min Kapasite",
+            ["MaxCapacity"] = "Max Kapasite",
+            ["PositionX"] = "X Konum",
+            ["PositionY"] = "Y Konum",
+            ["Shape"] = "Şekil",
+            ["AreaType"] = "Alan Tipi",
+            ["IsReservable"] = "Rezerve Edilebilir",
+            ["DayOfWeek"] = "Gün",
+            ["OpenTime"] = "Açılış",
+            ["CloseTime"] = "Kapanış",
+            ["IsClosed"] = "Kapalı",
+            ["IsFullDay"] = "Tüm Gün",
+            ["Key"] = "Anahtar",
+            ["Value"] = "Değer",
+            ["Group"] = "Grup",
+            ["DataType"] = "Veri Tipi",
+            ["TemplateName"] = "Şablon Adı",
+            ["Subject"] = "Konu",
+            ["Body"] = "İçerik",
+            ["Type"] = "Tip",
+            ["Culture"] = "Kültür",
+            ["UserId"] = "Kullanıcı",
+            ["UserName"] = "Kullanıcı Adı",
+            ["Action"] = "İşlem",
+            ["EntityName"] = "Varlık",
+            ["EntityId"] = "Varlık No",
+            ["OldValues"] = "Eski Değerler",
+            ["NewValues"] = "Yeni Değerler",
+            ["IpAddress"] = "IP Adresi",
+            ["UserAgent"] = "Tarayıcı",
+            ["ConsentType"] = "İzin Tipi",
+            ["IsGranted"] = "Verildi mi",
+            ["GrantedAt"] = "Verilme Tarihi",
+            ["RevokedAt"] = "İptal Tarihi",
+            ["Note"] = "Not",
+            ["NoShowCount"] = "Gelmeme",
+            ["VisitCount"] = "Ziyaret",
+            ["TotalSpent"] = "Toplam Harcama",
+            ["IsGuest"] = "Misafir",
+            ["IsVip"] = "VIP",
+            ["PortionInfo"] = "Porsiyon",
+            ["Calories"] = "Kalori",
+            ["SpicyLevel"] = "Baharat",
+            ["PreparationTimeMinutes"] = "Hazırlık (dk)",
+            ["IsChefRecommended"] = "Şef Önerisi",
+            ["IsPopular"] = "Popüler",
+            ["IsNewItem"] = "Yeni",
+            ["TaxPercentage"] = "Vergi %",
+            ["IsDefault"] = "Varsayılan",
+            ["OverridePrice"] = "Fiyat Geçersiz Kılma",
+            ["IsAvailable"] = "Müsait",
+            ["MinGuests"] = "Min Kişi",
+            ["MaxGuests"] = "Max Kişi",
+            ["SlotDurationMinutes"] = "Slot Süresi",
+            ["DefaultDurationMinutes"] = "Varsayılan Süre",
+            ["MinAdvanceHours"] = "Min İlerleme (saat)",
+            ["MaxAdvanceDays"] = "Max İlerleme (gün)",
+            ["CancellationDeadlineHours"] = "İptal Süresi (saat)",
+            ["AllowWaitlist"] = "Bekleme Listesi",
+            ["RequireConfirmation"] = "Onay Gerekli",
+            ["CombinedCapacity"] = "Toplam Kapasite",
+            ["OccasionNotes"] = "Notlar",
+            ["IsBirthday"] = "Doğum Günü",
+            ["Source"] = "Kaynak",
+            ["PreferredArea"] = "Tercih Edilen Alan",
+            ["PreferredTime"] = "Tercih Edilen Saat",
+            ["IsNotified"] = "Bildirildi",
+            ["IsConverted"] = "Dönüştürüldü",
+            ["ConvertedReservationId"] = "Dönüştürülen Rez.",
+            ["MetaTitle"] = "Meta Başlık",
+            ["MetaDescription"] = "Meta Açıklama",
+            ["FeaturedImageUrl"] = "Öne Çıkan Görsel",
+            ["PageType"] = "Sayfa Tipi",
+            ["PublishedAt"] = "Yayın Tarihi",
+            ["FileName"] = "Dosya Adı",
+            ["OriginalFileName"] = "Orijinal Ad",
+            ["FilePath"] = "Dosya Yolu",
+            ["FileSize"] = "Boyut",
+            ["Width"] = "Genişlik",
+            ["Height"] = "Yükseklik",
+            ["Folder"] = "Klasör",
+            ["Icon"] = "İkon",
+            ["CssClass"] = "CSS Sınıfı",
+            ["ParentCategoryId"] = "Üst Kategori",
+            ["ImageUrl"] = "Görsel URL",
+            ["LogoUrl"] = "Logo URL",
+            ["FaviconUrl"] = "Favicon URL",
+            ["Website"] = "Web Sitesi",
+            ["TaxId"] = "Vergi No",
+            ["Description"] = "Açıklama",
+            ["ConfirmationCode"] = "Onay Kodu",
+            ["RepliedAt"] = "Yanıt Tarihi",
+            ["AdminReply"] = "Admin Yanıtı",
+            ["IsRead"] = "Okundu",
+            ["ReadAt"] = "Okunma Tarihi",
+            ["Link"] = "Bağlantı",
+            ["Message"] = "Mesaj",
+            ["ReferenceType"] = "Referans Tipi",
+            ["ReferenceId"] = "Referans No",
+            ["RetryCount"] = "Deneme",
+            ["MaxRetries"] = "Max Deneme",
+            ["NextRetryAt"] = "Sonraki Deneme",
+            ["SentAt"] = "Gönderim",
+            ["ErrorMessage"] = "Hata Mesajı",
+            ["Recipient"] = "Alıcı",
+            ["NormalizedUserName"] = "Kullanıcı Adı (Norm)",
+            ["NormalizedEmail"] = "E-posta (Norm)",
+            ["PasswordHash"] = "Parola Hash",
+            ["SecurityStamp"] = "Güvenlik Damgası",
+            ["ConcurrencyStamp"] = "Eşzamanlılık",
+            ["PhoneNumber"] = "Telefon",
+            ["PhoneNumberConfirmed"] = "Telefon Onaylı",
+            ["TwoFactorEnabled"] = "2FA",
+            ["LockoutEnd"] = "Kilit Bitiş",
+            ["LockoutEnabled"] = "Kilit Aktif",
+            ["AccessFailedCount"] = "Başarısız Giriş",
+            ["NormalizedName"] = "Ad (Norm)",
+            ["RoleNameIndex"] = "Rol Adı İndeksi"
+        };
+        return map.TryGetValue(name, out var label) ? label : name;
+    }
+}

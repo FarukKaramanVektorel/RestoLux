@@ -1,0 +1,62 @@
+﻿@{
+    ViewData["Title"] = "Ana Sayfa";
+    var branches = ViewBag.Branches as IEnumerable<RestoLux.Application.DTOs.BranchDto> ?? new List<RestoLux.Application.DTOs.BranchDto>();
+    var products = ViewBag.Products as IEnumerable<RestoLux.Application.DTOs.ProductDto> ?? new List<RestoLux.Application.DTOs.ProductDto>();
+    var reviews = ViewBag.Reviews as IEnumerable<RestoLux.Application.DTOs.ReviewDto> ?? new List<RestoLux.Application.DTOs.ReviewDto>();
+}
+<div class="text-center mb-5">
+    <h1 class="display-4">RestoLux'a Hoş Geldiniz</h1>
+    <p class="lead">Lezzetli menümüzü keşfedin ve rezervasyon yapın.</p>
+    <a class="btn btn-primary" asp-controller="Menu" asp-action="Index">Menüyü Gör</a>
+    <a class="btn btn-outline-primary" asp-controller="Reservation" asp-action="Index">Rezervasyon Yap</a>
+</div>
+
+<h3>Şubelerimiz</h3>
+<div class="row mb-4">
+    @foreach (var b in branches)
+    {
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">@b.Name</h5>
+                    <p class="card-text">@b.Address @b.City</p>
+                    <p class="card-text"><small>@b.Phone</small></p>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<h3>Öne Çıkan Ürünler</h3>
+<div class="row mb-4">
+    @foreach (var p in products)
+    {
+        <div class="col-md-3 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h6 class="card-title">@p.Name</h6>
+                    <p class="card-text">@p.Description</p>
+                    <p class="fw-bold">@p.Price.ToString("C")</p>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (reviews.Any())
+{
+    <h3>Müşteri Yorumları</h3>
+    <div class="row">
+        @foreach (var r in reviews)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-text">"@r.Comment"</p>
+                        <p class="mb-0"><strong>@r.AuthorName</strong> - @r.Rating/5</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

@@ -1,0 +1,53 @@
+@{
+    ViewData["Title"] = "Menü";
+    var branches = ViewBag.Branches as IEnumerable<RestoLux.Application.DTOs.BranchDto> ?? new List<RestoLux.Application.DTOs.BranchDto>();
+    var menus = ViewBag.Menus as IEnumerable<RestoLux.Application.DTOs.MenuDto> ?? new List<RestoLux.Application.DTOs.MenuDto>();
+    var categories = ViewBag.Categories as IEnumerable<RestoLux.Application.DTOs.MenuCategoryDto> ?? new List<RestoLux.Application.DTOs.MenuCategoryDto>();
+    var products = ViewBag.Products as IEnumerable<RestoLux.Application.DTOs.ProductDto> ?? new List<RestoLux.Application.DTOs.ProductDto>();
+    var selected = ViewBag.SelectedBranchId as int?;
+}
+<h2 class="mb-3">Menü</h2>
+<form method="get" class="mb-3">
+    <select name="branchId" class="form-select" onchange="this.form.submit()">
+        @foreach (var b in branches)
+        {
+            <option value="@b.Id" selected="@(b.Id == selected)">@b.Name</option>
+        }
+    </select>
+</form>
+
+@foreach (var menu in menus)
+{
+    <h4 class="mt-4">@menu.Name</h4>
+    @if (!string.IsNullOrEmpty(menu.Description)) { <p class="text-muted">@menu.Description</p> }
+    var cats = categories.Where(c => c.MenuId == menu.Id).OrderBy(c => c.SortOrder);
+    foreach (var cat in cats)
+    {
+        <h5 class="mt-3">@cat.Name</h5>
+        <div class="row">
+            @foreach (var p in products.Where(x => x.CategoryId == cat.Id))
+            {
+                var img = (ViewBag.ProductImages as IEnumerable<RestoLux.Application.DTOs.ProductImageDto>)?
+                    .Where(i => i.ProductId == p.Id)
+                    .OrderByDescending(i => i.IsPrimary)
+                    .ThenBy(i => i.SortOrder)
+                    .ThenBy(i => i.Id)
+                    .FirstOrDefault();
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        @if (img != null)
+                        {
+                            <img src="@img.Url" class="card-img-top" alt="@p.Name" style="height:180px;object-fit:cover;" />
+                        }
+                        <div class="card-body">
+                            <h6 class="card-title">@p.Name</h6>
+                            <p class="card-text small">@p.Description</p>
+                            @if (p.Calories.HasValue) { <span class="badge bg-secondary">~@p.Calories kcal</span> }
+                            <p class="fw-bold mt-2">@p.Price.ToString("C")</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+}

@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="RestoLux.Application/RestoLux.Application.csproj" />
+  <Project Path="RestoLux.Domain/RestoLux.Domain.csproj" />
+  <Project Path="RestoLux.Infrastructure/RestoLux.Infrastructure.csproj" />
+  <Project Path="RestoLux.Tests/RestoLux.Tests.csproj" />
+  <Project Path="RestoLux.Web/RestoLux.Web.csproj" />
+</Solution>

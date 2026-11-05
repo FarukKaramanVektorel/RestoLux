@@ -1,0 +1,63 @@
+@model object
+@{
+    ViewData["Title"] = "Ürün Düzenle";
+    var t = Model?.GetType();
+    var props = t!.GetProperties();
+    var categories = ViewBag.Categories as IEnumerable<RestoLux.Application.DTOs.MenuCategoryDto> ?? new List<RestoLux.Application.DTOs.MenuCategoryDto>();
+    var id = ViewData["Id"];
+    var images = ViewBag.ProductImages as IEnumerable<RestoLux.Application.DTOs.ProductImageDto> ?? new List<RestoLux.Application.DTOs.ProductImageDto>();
+    var selectedCatId = (int)(props.FirstOrDefault(p => p.Name == "CategoryId")?.GetValue(Model) ?? 0);
+}
+<h2 class="mb-3">Ürün Düzenle</h2>
+@if (images.Any())
+{
+    <div class="mb-3 d-flex gap-2 flex-wrap">
+        @foreach (var img in images)
+        {
+            <img src="@img.Url" alt="" style="width:64px;height:64px;object-fit:cover;border-radius:6px;" />
+        }
+    </div>
+}
+<form asp-controller="Products" asp-action="EditWithImage" asp-route-id="@id" method="post" enctype="multipart/form-data" class="row g-3">
+    @Html.AntiForgeryToken()
+    <div class="col-md-6">
+        <label class="form-label">Kategori</label>
+        <select name="CategoryId" class="form-select" required>
+            @foreach (var c in categories)
+            {
+                <option value="@c.Id" selected="@(c.Id == selectedCatId)">@c.Name</option>
+            }
+        </select>
+    </div>
+    @foreach (var p in props.Where(x => x.Name != "CategoryId"))
+    {
+        <div class="col-md-6">
+            <label class="form-label">@p.Name</label>
+            @if (p.PropertyType == typeof(bool))
+            {
+                <input type="checkbox" name="@p.Name" value="true" class="form-check-input" @( (Model is not null && (bool)(p.GetValue(Model) ?? false)) ? "checked" : "" ) />
+            }
+            else if (p.PropertyType.IsEnum)
+            {
+                <select name="@p.Name" class="form-select">
+                    @foreach (var v in Enum.GetValues(p.PropertyType))
+                    {
+                        <option value="@v" selected="@(Model is not null && Equals(p.GetValue(Model), v))">@v</option>
+                    }
+                </select>
+            }
+            else
+            {
+                <input name="@p.Name" value="@(Model is null ? "" : p.GetValue(Model))" class="form-control" />
+            }
+        </div>
+    }
+    <div class="col-md-6">
+        <label class="form-label">Yeni Görsel (opsiyonel)</label>
+        <input type="file" name="imageFile" class="form-control" accept="image/*" />
+    </div>
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Güncelle</button>
+        <a class="btn btn-secondary" asp-action="Index">İptal</a>
+    </div>
+</form>
