@@ -1,0 +1,51 @@
+
+# ==========================================
+# BUILD STAGE
+# ==========================================
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+
+WORKDIR /src
+
+# Project files
+COPY RestoLux.Domain/RestoLux.Domain.csproj RestoLux.Domain/
+COPY RestoLux.Application/RestoLux.Application.csproj RestoLux.Application/
+COPY RestoLux.Infrastructure/RestoLux.Infrastructure.csproj RestoLux.Infrastructure/
+COPY RestoLux.Web/RestoLux.Web.csproj RestoLux.Web/
+
+# Restore dependencies
+RUN dotnet restore RestoLux.Web/RestoLux.Web.csproj
+
+# Copy source code
+COPY . .
+
+# Publish application
+RUN dotnet publish RestoLux.Web/RestoLux.Web.csproj \
+    -c Release \
+    -o /app/publish \
+    --no-restore
+
+# ==========================================
+# RUNTIME STAGE
+# ==========================================
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+
+WORKDIR /app
+
+# Application data directories
+RUN mkdir -p /data /app/logs /app/wwwroot/uploads \
+    && chown -R app:app /data /app
+
+COPY --from=build --chown=app:app /app/publish .
+
+# ASP.NET Core HTTP port
+ENV ASPNETCORE_HTTP_PORTS=8080
+ENV ASPNETCORE_ENVIRONMENT=Production
+
+# SQLite database persistence
+ENV ConnectionStrings__DefaultConnection="Data Source=/data/restolux.db"
+
+EXPOSE 8080
+
+USER app
+
+ENTRYPOINT ["dotnet", "RestoLux.Web.dll"]

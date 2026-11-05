@@ -1,0 +1,16 @@
+
+**/bin/
+**/obj/
+**/.vs/
+**/.idea/
+**/TestResults/
+**/node_modules/
+.git/
+.gitignore
+.vscode/
+Dockerfile
+.dockerignore
+*.user
+*.suo
+.env
+.env.*
